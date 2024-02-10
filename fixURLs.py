@@ -13,19 +13,9 @@ conn_info = dict(
 qbt_client = qbittorrentapi.Client(**conn_info)
 qbt_client.auth_log_in()
 
-qbt_client.torrents_create_tags(tags="trackerless")
-
 for torrent in qbt_client.torrents_info():
     for tracker in torrent.trackers:
         if badURL in tracker.url:
-            torrent.add_tags(tags="trackerless")
             torrent.remove_trackers(urls=[tracker.url])
-            print(f"Removed {tracker.url} from #{datetime.fromtimestamp(torrent.added_on)}# {torrent.name}")
-            
-
-for torrent in qbt_client.torrents_info():
-    if  "trackerless" in torrent.tags:
-        torrent.add_trackers(urls=goodURL)
-        torrent.remove_tags(tags="trackerless")
-        print(f"fixed {torrent.name}")
-qbt_client.torrents_delete_tags(tags="trackerless")
+            torrent.add_trackers(urls=goodURL)            
+            print(f"fixed {torrent.name}")
